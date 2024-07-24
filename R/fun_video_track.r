@@ -253,7 +253,6 @@ video_tracks<-function(l_tracks, IDs=NULL,day=NULL, zero_ts=FALSE, dt, bbox=NULL
 	##	find max step also
 	## + trailInt zodat de trail kan verdwijnen
 	for (i in 1:(maxTint+trail+1)){
-		print(i)
 
 		l_subset<-lapply(l_steps, function(x)x[x$Tinterval<=i&x$Tinterval>(i-trail),])
 
@@ -359,7 +358,18 @@ video_tracks<-function(l_tracks, IDs=NULL,day=NULL, zero_ts=FALSE, dt, bbox=NULL
 
 				cat(paste("Saving video ... ","\n", sep=""))
 
-				saveVideo(ani.replay(), video.name = paste(name, ".mp4", sep=""),ffmpeg = "C:\\ffmpeg\\bin\\ffmpeg.exe", interval=frames_s, ani.width=px_width/Scale, ani.height=px_height/Scale,ani.dev="png", other.opts = paste("-pix_fmt yuv420p -c:v ",codec, " -hide_banner -crf 18", sep=""))
+
+				saveVideo(ani.replay(),
+						  video.name = paste(name, ".mp4", sep=""),
+						  ffmpeg = "C:\\ffmpeg\\bin\\ffmpeg.exe",
+						  interval=frames_s,
+						  ani.width=px_width/Scale,
+						  ani.height=px_height/Scale,
+						  ani.dev="png",
+						  other.opts = paste("-pix_fmt yuv420p -c:v ",
+											 codec,
+											 " -hide_banner -loglevel warning -stats -crf 18 ",
+											 sep=""))
 
 				### oude code met andere commando's voor bijv. equal bitrate
 				# saveVideo(ani.replay(), video.name = paste(name, ".mp4", sep=""),ffmpeg = "C:\\ffmpeg\\bin\\ffmpeg.exe", interval=frames_s, ani.width=px_width, ani.height=px_height,ani.dev="png", other.opts = "-pix_fmt yuv420p -c:v libx264 -b:v 1000k")

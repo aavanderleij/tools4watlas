@@ -1,72 +1,55 @@
-
-##### create movie
-## created by allert bijleveld 03 July 2017
-
-### test
-# l_tracks<-ldf_osm
-# IDs=NULL
-# day=NULL
-# zero_ts=TRUE
-# dt=30
-# bbox=BBox
-# frames_s=10
-# LINES=TRUE
-# PAST_LINES=TRUE
-# trail=5
-# tg_cols=NULL
-# species=NULL
-# Save=FALSE
-# pad=getwd()
-# name=paste(Sys.Date(), "pegerine", sep="-")
-# fr=0.015
-# ppi=96
-# LEGEND=LEGEND
-# plot_LEGEND_IDs=TRUE
-# legend_line=1
-# legend_cex=2
-# legend_text=1
-# scale_bar=SCALE_BAR
-# scale_dt=SCALE_DT
-# Scale =2
-# codec="libx264"
-# towers=NULL
-# water=NULL
-# hoogte=NULL
-# tmp_PNGs=FALSE
-# SCALE_DIST=5000
+#' Create a video with tracking data
+#'
+#' Creates a video or video frames with tracking data
+#'
+#' @author Allert Bijleveld
+#' @param l_tracks list of tracks to plot
+#' @param zero_ts whether to calculate relative time by subtracting start time from time of the track (to sync them between differen tracks )
+#' @param dt timestep for aggregating locations (seconds)
+#' @param bbox bonding box for underlying map (NULL = estimate bbox form data)
+#' @param frames_s frames per second
+#' @param LINES whether or not plot a line for the track where it has been before
+#' @param PAST_LINES add line for the whole past track
+#' @param trail lenght of trail (times dt)
+#' @param MAP openmap object (NULL = load map from bbox ?
+#' @param tg_cols colors of each tag
+#' @param species dataframe with columns for name (species) and colour (COL) per species used in legend
+#' @param Save whether to save the video
+#' @param pad video save location
+#' @param name video name
+#' @param fr fraction of plot range to move scale bar up and left?
+#' @param ppi
+#' @param LEGEND position of legend
+#' @param plot_LEGEND_IDs
+#' @param legend_line interspacing between lines
+#' @param legend_cex size of points in legend
+#' @param legend_text size of text in legend
+#' @param scale_bar
+#' @param scale_dt
+#' @param SCALE_DIST scale bar sistance in meters
+#' @param codec
+#' @param towers data of tower locations, plot tower locations in video (NULL = don't plot towers)
+#' @param water tidal data, plot tilal data in video (NULL = don't plot tidal data)
+#' @param hoogte height data, plot height data in video (NULL = don't plot height data)
+#' @param tmp_PNGs
+#' @return
+#'
+#' @examples
+#' \dontrun{
+#' video_tracks(ldf_osm, dt=Dt, trail=Trail, IDs=tag_list_all, PAST_LINES=Past_Lines, MAP=MAP,frames_s=Frames_s, ppi=96,
+#' Save=TRUE, pad="C:/path/to/track_videos/", name=Name, tg_cols=COL, species=species_col, LEGEND=LEGEND,
+#' plot_LEGEND_IDs=PLOT_LEGEND_IDs, legend_line=SCALE_LEGEND_LINE, legend_cex=SCALE_LEGEND_CEX,
+#' legend_text=SCALE_LEGEND_TXT, bbox=BBox, Scale=SCALE, SCALE_DIST=SCALE_DIST, scale_bar=SCALE_BAR, scale_dt=SCALE_DT,
+#' codec="libx264", towers=towers, water=Water, hoogte=HOOGTE, tmp_PNGs=FALSE)
+#' }
+#'
+#' @export
+#'
 
 ## It would be useful to be able to plot tracks in sequence (let's say per day).
 # For this the timestap needs to be from the minum overall to the maximum overall time.
 
 video_tracks<-function(l_tracks, IDs=NULL,day=NULL, zero_ts=FALSE, dt, bbox=NULL, frames_s=15, LINES=TRUE, PAST_LINES=TRUE, trail=10, MAP=NULL, tg_cols=NULL, species=NULL, Save=FALSE, pad=getwd(), name, fr=0.015,ppi=NULL,LEGEND=LEGEND, plot_LEGEND_IDs=TRUE, legend_line=1, legend_cex=1,legend_text=1, scale_bar=1, scale_dt=1, Scale=1, SCALE_DIST=5000, codec="libx264", towers=NULL, water=NULL, hoogte=NULL, tmp_PNGs=FALSE){
-
-	# ltracks: list of tracks to plot
-	# IDs: names for legend
-	# zero_ts: whether to calculate relative time by subtracting start time from time of the track (to sync them between differen tracks )
-	# dt: timestep for aggregating locations (s)
-	# bbox (LL): bounding box for underlying map
-	# pxwidth and height: dimensions of map
-	# frames_s: aantal frames per seconde
-	# LINES: whether or not plot a loine for the track where it has been before
-	#PAST_LINES: add line for the whole past track
-	# trail: trail van de track in aantal kaer Dt
-	# tg_cols: colors of each tag
-	# species: dataframe with columns for name (species) and colour (COL) per species used in legend
-	# Save: whether to save the video
-	# pad: waar je de video wilt saven
-	# name: video name
-	# fr: fractie van plot range dat de scale bar naar links en naar boven gaat
-	# LEGEND	# position of legend
-	# legend_line: interspacing between lines
-	# legend_cex: size of the points  in legend
-	# legend_text: size of the text in legend
-	# Scale: to increase fonts and ces from final video output
-	# codec="libx264" # codec to use for video utput
-	# towers	# tower data ((NULL = not plot))
-	# water		# water data to plot (NULL = not plot)
-	# hoogte	# hoogte data (NULL = not plot)
-	# tmp_PNGs	# False means plots are stored in memory; if true a PNG file is stored per frame in directory pad/tmp_animate
-	# SCALE_DIST size of scalebar in m
 
 ## load libraries
 
@@ -77,8 +60,6 @@ video_tracks<-function(l_tracks, IDs=NULL,day=NULL, zero_ts=FALSE, dt, bbox=NULL
 	library("RColorBrewer")
 	library("animation")
   	library("stringr")
-	# library("rgdal")
-	# library("data.table")
 
 
 	## catch possible errors or non-logical combinations of settings

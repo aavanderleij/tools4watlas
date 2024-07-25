@@ -6,7 +6,7 @@
 #' @param l_tracks list of tracks to plot
 #' @param zero_ts whether to calculate relative time by subtracting start time from time of the track (to sync them between differen tracks )
 #' @param dt timestep for aggregating locations (seconds)
-#' @param bbox bonding box for underlying map (NULL = estimate bbox form data)
+#' @param bbox bonding box for underlying map (default = NULL, estimate bbox form data)
 #' @param frames_s frames per second
 #' @param LINES whether or not plot a line for the track where it has been before
 #' @param PAST_LINES add line for the whole past track
@@ -30,17 +30,17 @@
 #' @param codec
 #' @param towers data of tower locations, plot tower locations in video (NULL = don't plot towers)
 #' @param water tidal data, plot tilal data in video (NULL = don't plot tidal data)
-#' @param hoogte height data, plot height data in video (NULL = don't plot height data)
+#' @param height height data, plot height data in video (NULL = don't plot height data)
 #' @param tmp_PNGs
 #' @return
 #'
 #' @examples
 #' \dontrun{
 #' video_tracks(ldf_osm, dt=Dt, trail=Trail, IDs=tag_list_all, PAST_LINES=Past_Lines, MAP=MAP,frames_s=Frames_s, ppi=96,
-#' Save=TRUE, pad="C:/path/to/track_videos/", name=Name, tg_cols=COL, species=species_col, LEGEND=LEGEND,
+#' Save=TRUE, pad="C:/path/to/videos/", name=Name, tg_cols=COL, species=species_col, LEGEND=LEGEND,
 #' plot_LEGEND_IDs=PLOT_LEGEND_IDs, legend_line=SCALE_LEGEND_LINE, legend_cex=SCALE_LEGEND_CEX,
 #' legend_text=SCALE_LEGEND_TXT, bbox=BBox, Scale=SCALE, SCALE_DIST=SCALE_DIST, scale_bar=SCALE_BAR, scale_dt=SCALE_DT,
-#' codec="libx264", towers=towers, water=Water, hoogte=HOOGTE, tmp_PNGs=FALSE)
+#' codec="libx264", towers=towers, water=Water, height=height, tmp_PNGs=FALSE)
 #' }
 #'
 #' @export
@@ -49,7 +49,11 @@
 ## It would be useful to be able to plot tracks in sequence (let's say per day).
 # For this the timestap needs to be from the minum overall to the maximum overall time.
 
-video_tracks<-function(l_tracks, IDs=NULL,day=NULL, zero_ts=FALSE, dt, bbox=NULL, frames_s=15, LINES=TRUE, PAST_LINES=TRUE, trail=10, MAP=NULL, tg_cols=NULL, species=NULL, Save=FALSE, pad=getwd(), name, fr=0.015,ppi=NULL,LEGEND=LEGEND, plot_LEGEND_IDs=TRUE, legend_line=1, legend_cex=1,legend_text=1, scale_bar=1, scale_dt=1, Scale=1, SCALE_DIST=5000, codec="libx264", towers=NULL, water=NULL, hoogte=NULL, tmp_PNGs=FALSE){
+video_tracks<-function(l_tracks, IDs=NULL,day=NULL, zero_ts=FALSE, dt, bbox=NULL, frames_s=15, LINES=TRUE,
+					   PAST_LINES=TRUE, trail=10, MAP=NULL, tg_cols=NULL, species=NULL, Save=FALSE, pad=getwd(), name,
+					   fr=0.015,ppi=NULL,LEGEND=LEGEND, plot_LEGEND_IDs=TRUE, legend_line=1, legend_cex=1,legend_text=1,
+					   scale_bar=1, scale_dt=1, Scale=1, SCALE_DIST=5000, codec="libx264", towers=NULL, water=NULL,
+					   height=NULL, tmp_PNGs=FALSE){
 
 ## load libraries
 
@@ -99,7 +103,7 @@ video_tracks<-function(l_tracks, IDs=NULL,day=NULL, zero_ts=FALSE, dt, bbox=NULL
 	aggregate_steps <- function(d1){
 		d1$x<-coordinates(d1)[,1]
 		d1$y<-coordinates(d1)[,2]
-		## aggregate  locations per Tstep blokje
+		## aggregate locations per Tstep window
 		D1<-ddply(as.data.frame(d1), .(Tinterval), summarise, time = median(time), X= median(x), Y= median(y), N=length(x))
 		D1<-D1[order(D1$Tinterval),]
 		# make aggregation spatial
@@ -177,7 +181,7 @@ video_tracks<-function(l_tracks, IDs=NULL,day=NULL, zero_ts=FALSE, dt, bbox=NULL
 		px_width  <- map$tiles[[1]]$yres[1] * Scale
 		px_height <- map$tiles[[1]]$xres[1]	* Scale
 
-		### voor film export moeten het even getallen zijn
+		### for video px_width and px_height need to be even numbers
 		if(px_width %% 2 != 0){px_width<-px_width-1}
 		if(px_height %% 2 != 0){px_height<-px_height-1}
 
@@ -198,18 +202,18 @@ video_tracks<-function(l_tracks, IDs=NULL,day=NULL, zero_ts=FALSE, dt, bbox=NULL
 			par(xpd=TRUE)
 			}
 
-## match waterstanden met Tintervals
+## match tidal data with Tintervals
 	if(!is.null(water)){
 		## set color of water
 			collint<-"blue"
 			RGBi<-rgb(col2rgb(collint)[1,1],col2rgb(collint)[2,1],col2rgb(collint)[3,1], alpha=90, max=255)
 
-		## crop waterdata data naar tracks
+		## crop tidal data to tracks
 			water<-water[water$datetime >= (min(Tsteps) - 601) & water$datetime <= (max(Tsteps)  + 601) ,]
-			if(nrow(water)==0){print("geen waterhoogtes in geselecteerde time window")}
+			if(nrow(water)==0){print("no tidal data found in selected time window")}
 
 		## error log if NAP data is not specified
-		if(is.null(hoogte)){ print("wel waterhoogte gespecificeerd, maar geen NAP")}
+		if(is.null(height)){ print("Tidal data is specified but NAP NULL")}
 		}
 
 
@@ -232,7 +236,7 @@ video_tracks<-function(l_tracks, IDs=NULL,day=NULL, zero_ts=FALSE, dt, bbox=NULL
 
 	#loop over all time steps
 	##	find max step also
-	## + trailInt zodat de trail kan verdwijnen
+	## + trailInt to set length of visible trail
 	for (i in 1:(maxTint+trail+1)){
 
 		l_subset<-lapply(l_steps, function(x)x[x$Tinterval<=i&x$Tinterval>(i-trail),])
@@ -250,15 +254,15 @@ video_tracks<-function(l_tracks, IDs=NULL,day=NULL, zero_ts=FALSE, dt, bbox=NULL
 		## add water
 		if(!is.null(water)){
 			## calculate inundated area
-			if(i<=maxTint){# anders error met de trail buiten de gemeten tijden
+			if(i<=maxTint){# prevents error if trails extens outside of mesured times
 				waterlevel<-water$waterlevel[which.min(abs(difftime(water$datetime, realTime$time[realTime$Tinterval==i])))]
-				droog <- hoogte > waterlevel
-				#plot(droog)
-				droog[droog>=0.5]<-NA
+				dry_land <- height > waterlevel
+				#plot(dry_land)
+				dry_land[dry_land>=0.5]<-NA
 				}
 			## overlay water
 				# image omdat met plot de plotting region verandert
-			image(droog, col=RGBi, interpolate=FALSE, add=TRUE, legend = FALSE)
+			image(dry_land, col=RGBi, interpolate=FALSE, add=TRUE, legend = FALSE)
 			}
 
 		# add towers
@@ -352,7 +356,7 @@ video_tracks<-function(l_tracks, IDs=NULL,day=NULL, zero_ts=FALSE, dt, bbox=NULL
 											 " -hide_banner -loglevel warning -stats -crf 18 ",
 											 sep=""))
 
-				### oude code met andere commando's voor bijv. equal bitrate
+				### old code with diffrent arguments like equal bitrate
 				# saveVideo(ani.replay(), video.name = paste(name, ".mp4", sep=""),ffmpeg = "C:\\ffmpeg\\bin\\ffmpeg.exe", interval=frames_s, ani.width=px_width, ani.height=px_height,ani.dev="png", other.opts = "-pix_fmt yuv420p -c:v libx264 -b:v 1000k")
 				} else {
 				cat(paste("PNG files are ready in: ","\n", file.path(pad, "tmp_animate"),"\n", sep=""))

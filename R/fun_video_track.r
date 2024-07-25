@@ -4,33 +4,36 @@
 #'
 #' @author Allert Bijleveld
 #' @param l_tracks list of tracks to plot
-#' @param zero_ts whether to calculate relative time by subtracting start time from time of the track (to sync them between differen tracks )
+#' @param IDs dataframe with tag information, default is Null
+#' @param zero_ts whether to calculate relative time by subtracting start time from time of the track
+#' (to sync them between differen tracks), default is FALSE.
 #' @param dt timestep for aggregating locations (seconds)
-#' @param bbox bonding box for underlying map (default = NULL, estimate bbox form data)
-#' @param frames_s frames per second
-#' @param LINES whether or not plot a line for the track where it has been before
-#' @param PAST_LINES add line for the whole past track
-#' @param trail lenght of trail (times dt)
-#' @param MAP openmap object (NULL = load map from bbox ?
-#' @param tg_cols colors of each tag
-#' @param species dataframe with columns for name (species) and colour (COL) per species used in legend
-#' @param Save whether to save the video
-#' @param pad video save location
+#' @param bbox bonding box for underlying map, default = NULL. If bbox is NULL bbox wil be estimateted from data
+#' @param frames_s frames per second, default is 15.
+#' @param LINES whether or not plot a line for the track where it has been before, default is TRUE.
+#' @param PAST_LINES add line for the whole past track, default is TRUE.
+#' @param trail lenght of trail, multipued by dt. Default is 10.
+#' @param MAP openmap object, default is NULL. If MAP is NULL the map will be loaded from the bbox.
+#' @param tg_cols colors of each tag, default is NULL.
+#' @param species dataframe with columns for name (species) and colour (COL) per species used in legend.
+#' Default is NULL. If species is NULL, legend and colour will be done per individulal.
+#' @param Save whether to save the video, default is FALSE
+#' @param pad video save location, default is current working direcory.
 #' @param name video name
-#' @param fr fraction of plot range to move scale bar up and left?
-#' @param ppi
+#' @param fr fraction of plot range to move scale bar up and left. #TODO get clarivication
+#' @param ppi pixel per inch, default is NULL #TODO why null default?
 #' @param LEGEND position of legend
-#' @param plot_LEGEND_IDs
-#' @param legend_line interspacing between lines
-#' @param legend_cex size of points in legend
-#' @param legend_text size of text in legend
-#' @param scale_bar
-#' @param scale_dt
-#' @param SCALE_DIST scale bar sistance in meters
-#' @param codec
-#' @param towers data of tower locations, plot tower locations in video (NULL = don't plot towers)
-#' @param water tidal data, plot tilal data in video (NULL = don't plot tidal data)
-#' @param height height data, plot height data in video (NULL = don't plot height data)
+#' @param plot_LEGEND_IDs plot tag id's in legend, default is TRUE
+#' @param legend_line interspacing between lines, default is 1.
+#' @param legend_cex size of points in legend, default is 1.
+#' @param legend_text size of text in legend, default is 1.
+#' @param scale_bar size of scalebar, default is 1. #TODO @ get clarity
+#' @param scale_dt Default is 1. #TODO get clarity
+#' @param SCALE_DIST scale bar sistance in meters, default is 5000.
+#' @param codec encoder used for FFmpeg, default is "libx264".
+#' @param towers data of tower locations, plot tower locations in video. Default is NULL, don't plot towers
+#' @param water tidal data, plot tilal data in video. Default is NULL, don't plot tidal data.
+#' @param height height data, plot height data in video. Default is NULL. don't plot height data.
 #' @param tmp_PNGs
 #' @return
 #'

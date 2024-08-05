@@ -52,7 +52,7 @@
 ## It would be useful to be able to plot tracks in sequence (let's say per day).
 # For this the timestap needs to be from the minum overall to the maximum overall time.
 
-video_tracks<-function(l_tracks, IDs=NULL,day=NULL, zero_ts=FALSE, dt, bbox=NULL, frames_s=15, LINES=TRUE,
+video_tracks<-function(l_tracks, IDs=NULL, dt, bbox=NULL, frames_s=15, LINES=TRUE,
 					   PAST_LINES=TRUE, trail=10, MAP=NULL, tg_cols=NULL, species=NULL, Save=FALSE, pad=getwd(), name,
 					   fr=0.015,ppi=NULL,LEGEND=LEGEND, plot_LEGEND_IDs=TRUE, legend_line=1, legend_cex=1,legend_text=1,
 					   scale_bar=1, scale_dt=1, Scale=1, SCALE_DIST=5000, codec="libx264", towers=NULL, water=NULL,

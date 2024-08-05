@@ -34,8 +34,8 @@
 #' @param towers data of tower locations, plot tower locations in video. Default is NULL, don't plot towers
 #' @param water tidal data, plot tilal data in video. Default is NULL, don't plot tidal data.
 #' @param height height data, plot height data in video. Default is NULL. don't plot height data.
-#' @param tmp_PNGs
-#' @return
+#' @param tmp_PNGs if TRUE, save the images to make the video. Default is FALSE, images will not be saved
+#' @return 0
 #'
 #' @examples
 #' \dontrun{
@@ -110,7 +110,7 @@ video_tracks<-function(l_tracks, IDs=NULL, dt, bbox=NULL, frames_s=15, LINES=TRU
 		D1<-ddply(as.data.frame(d1), .(Tinterval), summarise, time = median(time), X= median(x), Y= median(y), N=length(x))
 		D1<-D1[order(D1$Tinterval),]
 		# make aggregation spatial
-		coordinates(D1) = ~X + Y
+		coordinates(D1) <- ~X + Y
 		proj4string(D1) <- osm()
 		D1
 		}

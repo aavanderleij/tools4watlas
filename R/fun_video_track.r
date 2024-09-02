@@ -111,27 +111,14 @@ video_tracks<-function(l_tracks, IDs=NULL, dt, bbox=NULL, frames_s=15, LINES=TRU
 		}
 	## plot tracks
 	plot_tracks<-function(d, COL){
-		d$col <- t_col(COL, seq(80,0,length.out=nrow(d)),NULL)
+		d$col <- atl_t_col(COL, seq(80,0,length.out=nrow(d)),NULL)
 		d$size<-seq(0.25,2,length.out=nrow(d))
 		points(coordinates(d), col=NULL,bg=d$col, cex= d$size, pch=21)
 		}
 	## plot tracks
 	plot_lines<-function(d, COL){
-		lines(coordinates(d), col=t_col(COL, 50, NULL))
+		lines(coordinates(d), col=atl_t_col(COL, 50, NULL))
 		}
-	## make colors transparent
-		t_col <- function(color, percent = 50, name = NULL) {
-		#	  color = color name
-		#	percent = % transparency
-		#	   name = an optional name for the color
-		## Get RGB values for named color
-		  rgb.val <- col2rgb(color)
-		## Make new color using input color as base and alpha set by transparency
-		  t.col <- rgb(rgb.val[1], rgb.val[2], rgb.val[3],max = 255,alpha = (100-percent)*255/100, names = name)
-		## Save the color
-		  # invisible(t.col)
-		  t.col
-		  }
 
 ### work the data
 

@@ -282,18 +282,15 @@ video_tracks<-function(l_tracks, IDs=NULL, dt, bbox=NULL, frames_s=15, LINES=TRU
 			}
 
 		## legend
+
 		if(!is.null(IDs) & plot_LEGEND_IDs ){ #limit legend to 20 tags
 			# single or multiple species
 			if(is.null(species) | length(unique(species))==1){ ## plot legend per tag
 					legend(LEGEND, c(IDs) , title="www.nioz.nl/watlas", col=c(COL), pt.bg=c(COL),pch=c(rep(21,length(COL))),text.col="white", cex=legend_text,pt.cex=legend_cex,bty = "n", x.intersp=legend_line,y.intersp=legend_line, ncol=1)
-					# legend(LEGEND, c("receiver stations",IDs) , col=c("red",COL), pt.bg=c("black",COL),pch=c(23,rep(21,length(COL))),text.col="white", cex=legend_text,pt.cex=legend_cex,bty = "n", x.intersp=legend_line,y.intersp=legend_line, ncol=1) # with receivers in legend
 				}else{ # plot per species
 					legend("topleft", c(spec$species), title="www.nioz.nl/watlas", title.adj=, title.cex=1.4*legend_text, col=c(spec$COL), pt.bg=c(spec$COL),pch=c(rep(21,length(spec$COL))),text.col="white", cex=legend_text, pt.cex=legend_cex, bty = "n", x.intersp=legend_line,y.intersp=legend_line*0.75, ncol=1)
-					# legend("topleft", c("receiver stations",spec$species) , col=c("red",spec$COL), pt.bg=c("black", spec$COL),pch=c(23,rep(21,length(spec$COL))),text.col="white", cex=legend_text, pt.cex=legend_cex, bty = "n", x.intersp=legend_line,y.intersp=legend_line, ncol=1) # with receivers in legend
 				}
-
-			}else{ # plot most simple legend with only the receiver stations
-				# legend(LEGEND, c("receiver stations") , col=c("red"), pt.bg=c("black"), pch=c(23), text.col="white", cex=legend_text,pt.cex=legend_cex,bty = "n", x.intersp=legend_line,y.intersp=legend_line)
+			}else{ # Display only the link to watlas
 				legend(LEGEND, c("www.nioz.nl/watlas"), text.col="white", cex=legend_text, pt.cex=legend_cex, bty = "n", x.intersp=legend_line,y.intersp=legend_line)
 			}
 
@@ -322,7 +319,7 @@ video_tracks<-function(l_tracks, IDs=NULL, dt, bbox=NULL, frames_s=15, LINES=TRU
 				}
 			}
 
-		}	# end for i
+		}	# end of timestep loop
 
 ## save the	videofile
 
@@ -348,7 +345,7 @@ video_tracks<-function(l_tracks, IDs=NULL, dt, bbox=NULL, frames_s=15, LINES=TRU
 											 sep=""))
 
 				} else {
-				cat(paste("PNG files are ready in: ","\n", file.path(pad, "tmp_animate"),"\n", sep=""))
+				cat(paste("PNG files are saved in: ","\n", file.path(pad, "tmp_animate"),"\n", sep=""))
 				}
 			}
 } # end of function

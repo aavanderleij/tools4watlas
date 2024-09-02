@@ -49,8 +49,6 @@
 #' @export
 #'
 
-## It would be useful to be able to plot tracks in sequence (let's say per day).
-# For this the timestap needs to be from the minum overall to the maximum overall time.
 
 video_tracks<-function(l_tracks, IDs=NULL, dt, bbox=NULL, frames_s=15, LINES=TRUE,
 					   PAST_LINES=TRUE, trail=10, MAP=NULL, tg_cols=NULL, species=NULL, Save=FALSE, pad=getwd(), name,
@@ -60,14 +58,12 @@ video_tracks<-function(l_tracks, IDs=NULL, dt, bbox=NULL, frames_s=15, LINES=TRU
 
 ## load libraries
 
-
 	library("raster")
 	library("plyr")
 	library("OpenStreetMap")
 	library("RColorBrewer")
 	library("animation")
   	library("stringr")
-
 
 	## catch possible errors or non-logical combinations of settings
 	if(Save==FALSE&tmp_PNGs==TRUE){stop("Writing PNG files without saving a movie is wasting time")}
@@ -85,6 +81,7 @@ video_tracks<-function(l_tracks, IDs=NULL, dt, bbox=NULL, frames_s=15, LINES=TRU
 	## which track has the max Tinterval
 	BBOX<-function(x, buffer=1000){
 		# buffer is in meters x en dan y
+	  print("in BBOX fun")
 		bbox<-as.data.frame(t(bbox(x)+matrix(c(-buffer,buffer,-buffer,buffer),nrow=2,byrow=TRUE)))
 		names(bbox)<-c("X","Y")
 		### make spatial bbox
@@ -94,8 +91,6 @@ video_tracks<-function(l_tracks, IDs=NULL, dt, bbox=NULL, frames_s=15, LINES=TRU
 		LL<- "+init=epsg:4326"
 		bbox<-spTransform(bbox,LL)
 		bbox<-bbox@bbox
-		# rbind(c(bbox[2,2], bbox[1,1]), c(bbox[2,1],bbox[1,2]))
-		# list(X = bbox[1,], Y=bbox[2,])
 		}
 		## get integers for timeinteravls
 	getIntervals<-function(x, Tsteps){
@@ -188,15 +183,6 @@ video_tracks<-function(l_tracks, IDs=NULL, dt, bbox=NULL, frames_s=15, LINES=TRU
 		if(px_width %% 2 != 0){px_width<-px_width-1}
 		if(px_height %% 2 != 0){px_height<-px_height-1}
 
-		## get number of pixels per inch on screen
-		# if(is.null(ppi)){
-			# pix<-dev.size(units = "px")
-			# inch<-dev.size(units = "in")
-			# ppi<-pix[1]/inch[1]
-			# dev.off()
-			# }
-
-
 		##initialise plot
 		if(tmp_PNGs==FALSE){
 			# set win graph with required dimensions in inches
@@ -213,6 +199,8 @@ video_tracks<-function(l_tracks, IDs=NULL, dt, bbox=NULL, frames_s=15, LINES=TRU
 
 		## crop tidal data to tracks
 			water<-water[water$datetime >= (min(Tsteps) - 601) & water$datetime <= (max(Tsteps)  + 601) ,]
+		print(nrow(water))
+
 			if(nrow(water)==0){print("no tidal data found in selected time window")}
 
 		## error log if NAP data is not specified
@@ -359,8 +347,6 @@ video_tracks<-function(l_tracks, IDs=NULL, dt, bbox=NULL, frames_s=15, LINES=TRU
 											 " -hide_banner -loglevel warning -stats -crf 18 ",
 											 sep=""))
 
-				### old code with diffrent arguments like equal bitrate
-				# saveVideo(ani.replay(), video.name = paste(name, ".mp4", sep=""),ffmpeg = "C:\\ffmpeg\\bin\\ffmpeg.exe", interval=frames_s, ani.width=px_width, ani.height=px_height,ani.dev="png", other.opts = "-pix_fmt yuv420p -c:v libx264 -b:v 1000k")
 				} else {
 				cat(paste("PNG files are ready in: ","\n", file.path(pad, "tmp_animate"),"\n", sep=""))
 				}

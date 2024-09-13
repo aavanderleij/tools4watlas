@@ -92,7 +92,7 @@ video_tracks<-function(l_tracks, IDs=NULL, dt, bbox=NULL, frames_s=15, LINES=TRU
 		bbox<-spTransform(bbox,LL)
 		bbox<-bbox@bbox
 		}
-		## get integers for timeinteravls
+		## get integers for timeintervals
 	getIntervals<-function(x, Tsteps){
 			x$Tinterval<- findInterval(x$time, Tsteps) + 1
 			x
@@ -122,12 +122,20 @@ video_tracks<-function(l_tracks, IDs=NULL, dt, bbox=NULL, frames_s=15, LINES=TRU
 
 ### work the data
 
-	## omzetten initial values
+	## tranform initial values
 	frames_s<-1/(frames_s)
 
 
 	## create timesteps
-		Tsteps<-seq(min(l_tracks[[which.min(unlist(lapply(l_tracks, whichmin, colName="time")))]]$time) + dt, max(l_tracks[[which.max(unlist(lapply(l_tracks, whichmax, colName="time")))]]$time), dt)
+		min_time <- min(l_tracks[[which.min(
+  			unlist(lapply(l_tracks, whichmin, colName = "time"))
+				)]]$time)
+
+		max_time <- max(l_tracks[[which.max(
+		  unlist(lapply(l_tracks, whichmax, colName = "time"))
+			)]]$time)
+
+		Tsteps <- seq(min_time + dt, max_time, dt)
 			## 60*dt omdat dt in minumten is en de steps in sec
 		# Tsteps<-seq(min(l_tracks[[which.min(unlist(lapply(l_tracks, whichmin, colName="time")))]]$time)+60*dt, max(l_tracks[[which.max(unlist(lapply(l_tracks, whichmax, colName="time")))]]$time), (60*dt))
 		# original  Tsteps<-seq(min(l_tracks[[which.max(unlist(lapply(l_tracks, whichmax, colName="time")))]]$time)+(60*dt), max(l_tracks[[which.max(unlist(lapply(l_tracks, whichmax, colName="time")))]]$time), (60*dt))
@@ -161,8 +169,7 @@ video_tracks<-function(l_tracks, IDs=NULL, dt, bbox=NULL, frames_s=15, LINES=TRU
 		if(is.null(MAP)){
 			map <- openmap(bbox[1,],bbox[2,],type='bing')
 			}
-		# plot(map)
-		# enlarge scale om mooie high quality vodeo te krijgen
+		# enlarge scale to get nicer high quality video
 		px_width  <- map$tiles[[1]]$yres[1] * Scale
 		px_height <- map$tiles[[1]]$xres[1]	* Scale
 
